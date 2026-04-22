@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using SubscriptionService.Models;
 
 namespace SubscriptionService.Controllers;
 
@@ -9,11 +10,12 @@ public class SubscriptionController : Controller
         public IActionResult GetSubscriptions()
         {
             // Placeholder for fetching subscriptions from a data source
-            var subscriptions = new[]
+            var subscriptions = new Subscription[]
             {
-                new { Id = 1, Name = "Basic Plan", Price = 9.99 },
-                new { Id = 2, Name = "Premium Plan", Price = 19.99 }
+                new(1, "Basic Plan", 9.99f),
+                new(2, "Premium Plan", 19.99f)
             };
+            
             return Ok(subscriptions);
         }
     
