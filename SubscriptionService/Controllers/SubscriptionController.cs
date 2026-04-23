@@ -3,20 +3,27 @@ using SubscriptionService.Models;
 
 namespace SubscriptionService.Controllers;
 
-public class SubscriptionController : Controller
+[ApiController]
+[Route("api/subscriptions")]
+public class SubscriptionController : ControllerBase
 {
- 
-        [HttpGet("/subscriptions")]
-        public IActionResult GetSubscriptions()
-        {
-            // Placeholder for fetching subscriptions from a data source
-            var subscriptions = new Subscription[]
-            {
-                new(1, "Basic Plan", 9.99f),
-                new(2, "Premium Plan", 19.99f)
-            };
-            
-            return Ok(subscriptions);
-        }
+    private static List<Subscription> _subscriptions =
+    [
+        new(1, "Basic Plan", 9.99f),
+        new(2, "Premium Plan", 19.99f)
+    ];
+
+    [HttpGet]
+    public IActionResult GetSubscriptions()
+    {
+        return Ok(_subscriptions);
+    }
+
+    [HttpPost]
+    public IActionResult CreateSubscription([FromBody] Subscription subscription)
+    {
+        _subscriptions.Add(subscription);
+        return CreatedAtAction(nameof(GetSubscriptions), new { id = subscription.ID }, subscription);
+    }
     
 }
