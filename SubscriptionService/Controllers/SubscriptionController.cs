@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using SubscriptionService.Data;
 using SubscriptionService.Models;
 
 namespace SubscriptionService.Controllers;
@@ -7,11 +8,19 @@ namespace SubscriptionService.Controllers;
 [Route("api/subscriptions")]
 public class SubscriptionController : ControllerBase
 {
+    
+    private readonly SubscriptionDbContext _context;
+    
     private static List<Subscription> _subscriptions =
     [
         new(1, "Basic Plan", 9.99f),
         new(2, "Premium Plan", 19.99f)
     ];
+    
+    public SubscriptionController(SubscriptionDbContext context)
+    {
+        _context = context;
+    }
 
     [HttpGet]
     public IActionResult GetSubscriptions()
@@ -43,9 +52,12 @@ public class SubscriptionController : ControllerBase
     }
     
     [HttpPost]
-    public IActionResult CreateSubscription([FromBody] Subscription subscription)
+    public async Task<IActionResult> CreateSubscription([FromBody] Subscription subscription)
     {
-        _subscriptions.Add(subscription);
+        _context.Subscriptions.Add(subscription);
+        //TODO: implement service class to handle business logic and data access
+        await _context.SaveChangesAsync();
+        
         return CreatedAtAction(nameof(GetSubscriptions), new { id = subscription.ID }, subscription);
     }
     
