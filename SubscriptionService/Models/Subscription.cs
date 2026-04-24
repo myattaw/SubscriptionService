@@ -1,3 +1,9 @@
 ﻿namespace SubscriptionService.Models;
 
-public record Subscription(int ID, string Name, float Price);
+public class Subscription
+{
+    public int ID { get; set; }
+    public string Name { get; set; } = "";
+    public decimal Price { get; set; }
+    
+}
