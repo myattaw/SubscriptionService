@@ -18,7 +18,30 @@ public class SubscriptionController : ControllerBase
     {
         return Ok(_subscriptions);
     }
-
+    
+    [HttpGet("{id}")]
+    public IActionResult GetSubscription(int id)
+    {
+        var subscription = _subscriptions.FirstOrDefault(s => s.ID == id);
+        if (subscription == null)
+        {
+            return NotFound();
+        }
+        return Ok(subscription);
+    }
+    
+    [HttpDelete("{id}")]
+    public IActionResult DeleteSubscription(int id)
+    {
+        var subscription = _subscriptions.FirstOrDefault(s => s.ID == id);
+        if (subscription == null)
+        {
+            return NotFound();
+        }
+        _subscriptions.Remove(subscription);
+        return NoContent();
+    }
+    
     [HttpPost]
     public IActionResult CreateSubscription([FromBody] Subscription subscription)
     {
