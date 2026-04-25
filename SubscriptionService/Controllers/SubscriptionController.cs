@@ -10,9 +10,9 @@ namespace SubscriptionService.Controllers;
 public class SubscriptionController : ControllerBase
 {
     
-    private readonly SubscriptionDbContext _context;
+    private readonly AppDbContext _context;
     
-    public SubscriptionController(SubscriptionDbContext context)
+    public SubscriptionController(AppDbContext context)
     {
         _context = context;
     }
