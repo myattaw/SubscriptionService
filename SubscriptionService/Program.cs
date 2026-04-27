@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using SubscriptionService.Data;
 using SubscriptionService.Models;
+using SubscriptionService.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,8 +9,18 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
+builder.Services.AddScoped<AuthService>();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite("Data Source=subscriptions.db"));
+
+builder.Services.AddAuthentication("AppCookie")
+    .AddCookie("AppCookie", options =>
+    {
+        options.Cookie.Name = "AppCookie";
+        options.LoginPath = "/api/auth/login";
+    });
+
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
@@ -24,17 +35,10 @@ using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     db.Database.EnsureCreated();
-
-    if (!db.Subscriptions.Any())
-    {
-        db.Subscriptions.AddRange(
-            new Subscription { Name = "Basic Plan", Price = 9.99m },
-            new Subscription { Name = "Premium Plan", Price = 19.99m }
-        );
-
-        db.SaveChanges();
-    }
 }
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.UseHttpsRedirection();
 app.MapControllers();
