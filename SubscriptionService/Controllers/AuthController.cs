@@ -1,10 +1,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using SubscriptionService.Data;
-using SubscriptionService.Models;
+using SubscriptionService.Models.Requests;
 using SubscriptionService.Services;
 
 namespace SubscriptionService.Controllers;
@@ -40,7 +37,12 @@ public class AuthController : ControllerBase
 
         await HttpContext.SignInAsync("AppCookie", principal);
 
-        return Ok();
+        return Ok(new
+        {
+            message = "Logged in",
+            userId = user.Id,
+            email = user.Email
+        });
     }
 
     [HttpPost("register")]
