@@ -1,0 +1,21 @@
+namespace SubscriptionService.Models;
+
+public class UserSubscription
+{
+    public int Id { get; set; }
+
+    public int UserId { get; set; }
+    public User User { get; set; }
+
+    public int SubscriptionPlanId { get; set; }
+    public SubscriptionPlan SubscriptionPlan { get; set; }
+
+    public bool BillingActive { get; set; } = true;
+
+    public DateTime StartDate { get; set; } = DateTime.UtcNow;
+
+    public DateTime? NextBillingDate { get; set; }
+
+    public string Status { get; set; } = "Active";
+    
+}

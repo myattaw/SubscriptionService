@@ -9,15 +9,9 @@ public class User
     public string PasswordHash { get; set; } = "";
 
     public string FullName { get; set; } = "";
-
-    public string SubscriptionTier { get; set; } = "Free";
-
-    public bool BillingActive { get; set; } = false;
-    
-    public DateTime? NextBillingDate { get; set; } = null;
     
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     
-    public List<Subscription> Subscriptions { get; set; } = new();
+    public List<UserSubscription> UserSubscriptions { get; set; } = new();
     
 }

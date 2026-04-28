@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SubscriptionService.Data;
 using SubscriptionService.Models;
+using SubscriptionService.Models.Requests;
 
 namespace SubscriptionService.Controllers;
 
@@ -9,54 +10,99 @@ namespace SubscriptionService.Controllers;
 [Route("api/subscriptions")]
 public class SubscriptionController : ControllerBase
 {
-    
     private readonly AppDbContext _context;
-    
+
     public SubscriptionController(AppDbContext context)
     {
         _context = context;
     }
 
-    [HttpGet]
-    public async Task<IActionResult> GetSubscriptions()
-    {
-        var subs = await _context.Subscriptions.ToListAsync();
-        return Ok(subs);
-    }
-    
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetSubscription(int id)
-    {
-        var subscription = await _context.Subscriptions.FindAsync(id);
+    // =========================
+    // SUBSCRIPTION PLAN CRUD
+    // =========================
 
-        if (subscription == null)
+    [HttpGet("plans")]
+    public async Task<IActionResult> GetAvailablePlans()
+    {
+        var plans = await _context.SubscriptionPlans.ToListAsync();
+        return Ok(plans);
+    }
+
+    [HttpPost("plans")]
+    public async Task<IActionResult> CreatePlan([FromBody] CreateSubscriptionPlanRequest request)
+    {
+        var plan = new SubscriptionPlan
+        {
+            Name = request.Name,
+            Price = request.Price
+        };
+
+        _context.SubscriptionPlans.Add(plan);
+        await _context.SaveChangesAsync();
+
+        return Ok(plan);
+    }
+
+    [HttpDelete("plans/{id}")]
+    public async Task<IActionResult> DeletePlan(int id)
+    {
+        var plan = await _context.SubscriptionPlans.FindAsync(id);
+
+        if (plan == null)
             return NotFound();
 
-        return Ok(subscription);
-    }
-    
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteSubscription(int id)
-    {
-        var subscription = await _context.Subscriptions.FindAsync(id);
-
-        if (subscription == null)
-            return NotFound();
-
-        _context.Subscriptions.Remove(subscription);
+        _context.SubscriptionPlans.Remove(plan);
         await _context.SaveChangesAsync();
 
         return NoContent();
     }
-    
-    [HttpPost]
-    public async Task<IActionResult> CreateSubscription([FromBody] Subscription subscription)
+
+    // =========================
+    // USER SUBSCRIPTION ASSIGNMENTS
+    // =========================
+
+    [HttpGet("active")]
+    public async Task<IActionResult> GetActiveSubscriptions()
     {
-        _context.Subscriptions.Add(subscription);
-        //TODO: implement service class to handle business logic and data access
+        var activeSubscriptions = await _context.UserSubscriptions
+            .Include(x => x.User)
+            .Include(x => x.SubscriptionPlan)
+            .ToListAsync();
+
+        return Ok(activeSubscriptions);
+    }
+
+    [HttpPost("assign")]
+    public async Task<IActionResult> AssignSubscription([FromBody] AssignSubscriptionRequest request)
+    {
+        var user = await _context.Users.FindAsync(request.UserId);
+        if (user == null)
+            return BadRequest("User does not exist.");
+
+        var plan = await _context.SubscriptionPlans.FindAsync(request.SubscriptionPlanId);
+        if (plan == null)
+            return BadRequest("Subscription plan does not exist.");
+
+        var alreadyAssigned = await _context.UserSubscriptions
+            .AnyAsync(x => x.UserId == request.UserId && x.SubscriptionPlanId == request.SubscriptionPlanId);
+
+        if (alreadyAssigned)
+            return BadRequest("User already has this subscription.");
+
+        var userSubscription = new UserSubscription
+        {
+            UserId = request.UserId,
+            SubscriptionPlanId = request.SubscriptionPlanId,
+            BillingActive = true,
+            StartDate = DateTime.UtcNow,
+            NextBillingDate = DateTime.UtcNow.AddMonths(1),
+            Status = "Active"
+        };
+
+        _context.UserSubscriptions.Add(userSubscription);
         await _context.SaveChangesAsync();
-        
-        return CreatedAtAction(nameof(GetSubscriptions), new { id = subscription.ID }, subscription);
+
+        return Ok(userSubscription);
     }
     
 }

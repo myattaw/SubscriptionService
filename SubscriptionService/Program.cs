@@ -35,6 +35,24 @@ using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     db.Database.EnsureCreated();
+
+    if (!db.SubscriptionPlans.Any())
+    {
+        db.SubscriptionPlans.AddRange(
+            new SubscriptionPlan
+            {
+                Name = "Free",
+                Price = 0.00m
+            },
+            new SubscriptionPlan
+            {
+                Name = "Premium",
+                Price = 19.99m
+            }
+        );
+
+        db.SaveChanges();
+    }
 }
 
 app.UseAuthentication();
