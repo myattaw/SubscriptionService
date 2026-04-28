@@ -1,7 +1,7 @@
 namespace SubscriptionService.Data;
 
 using Microsoft.EntityFrameworkCore;
-using SubscriptionService.Models;
+using Models;
 
 public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
 {
