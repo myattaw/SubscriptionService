@@ -16,10 +16,18 @@ public class BillingCycleService : BackgroundService
         {
 
             _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
+
+            await RunBillingCycle();
             
             await Task.Delay(TimeSpan.FromSeconds(10), stoppingToken);
         }
     }
+
+    private async Task RunBillingCycle()
+    {
+        throw new NotImplementedException();
+    }
+    
     
     
 }
