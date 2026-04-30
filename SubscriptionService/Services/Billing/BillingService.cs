@@ -56,7 +56,11 @@ public class BillingService
         if (plan.Price <= 0)
             return "Invalid subscription plan price";
         
-        if (user.UserSubscriptions.Any(x => x.BillingActive && x.Status == "Active"))
+        if (user.UserSubscriptions.Any(x => x is
+            {
+                BillingActive: true, 
+                Status: SubscriptionStatus.Active
+            }))
             return "User already has an active subscription";
 
         if (user.AccountCredits < plan.Price)
@@ -72,7 +76,7 @@ public class BillingService
             CurrentPrice = plan.Price,
             StartDate = DateTime.UtcNow,
             NextBillingDate = DateTime.UtcNow.AddMonths(1),
-            Status = "Active"
+            Status = SubscriptionStatus.Active
         };
 
         _context.UserSubscriptions.Add(userSubscription);

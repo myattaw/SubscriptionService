@@ -20,8 +20,8 @@ public class UserSubscription
 
     public DateTime? NextBillingDate { get; set; }
 
-    public string Status { get; set; } = "Active";
     // Active / PastDue / Cancelled / Expired
+    public SubscriptionStatus Status { get; set; }
 
     public List<PaymentTransaction> PaymentTransactions { get; set; } = new();
 }

@@ -20,12 +20,11 @@ public class SubscriptionPlanService
     {
         return await _context.SubscriptionPlans
             .AsNoTracking()
-            .Select(x => new SubscriptionPlanResponse
-            {
-                Id = x.Id,
-                Name = x.Name,
-                Price = x.Price
-            })
+            .Select(x => new SubscriptionPlanResponse(
+                x.Id,
+                x.Name,
+                x.Price
+            ))
             .ToListAsync();
     }
 
@@ -40,14 +39,13 @@ public class SubscriptionPlanService
         _context.SubscriptionPlans.Add(plan);
         await _context.SaveChangesAsync();
 
-        return new SubscriptionPlanResponse
-        {
-            Id = plan.Id,
-            Name = plan.Name,
-            Price = plan.Price
-        };
+        return new SubscriptionPlanResponse(
+            plan.Id,
+            plan.Name,
+            plan.Price
+        );
     }
-
+    
     public async Task<bool> DeletePlan(int id)
     {
         var plan = await _context.SubscriptionPlans.FindAsync(id);
@@ -105,7 +103,7 @@ public class SubscriptionPlanService
             BillingActive = true,
             StartDate = DateTime.UtcNow,
             NextBillingDate = DateTime.UtcNow.AddMonths(1),
-            Status = "Active"
+            Status = SubscriptionStatus.Active
         };
 
         _context.UserSubscriptions.Add(userSubscription);
