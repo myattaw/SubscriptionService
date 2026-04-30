@@ -1,3 +1,5 @@
+using SubscriptionService.Models.Payment;
+
 namespace SubscriptionService.Data;
 
 using Microsoft.EntityFrameworkCore;
@@ -9,6 +11,9 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<SubscriptionPlan> SubscriptionPlans { get; set; }
     public DbSet<UserSubscription> UserSubscriptions { get; set; }
 
+    public DbSet<PaymentTransaction> PaymentTransactions { get; set; }
+
+    
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -29,6 +34,12 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             .HasOne(x => x.SubscriptionPlan)
             .WithMany(x => x.UserSubscriptions)
             .HasForeignKey(x => x.SubscriptionPlanId);
+        
+        modelBuilder.Entity<PaymentTransaction>()
+            .HasOne(x => x.UserSubscription)
+            .WithMany(x => x.PaymentTransactions)
+            .HasForeignKey(x => x.UserSubscriptionId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
     
 }

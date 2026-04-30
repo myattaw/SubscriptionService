@@ -17,7 +17,7 @@ public class BillingCycleService : BackgroundService
 
             _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
 
-            await RunBillingCycle();
+            // await RunBillingCycle();
             
             await Task.Delay(TimeSpan.FromSeconds(10), stoppingToken);
         }

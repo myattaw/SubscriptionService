@@ -28,6 +28,13 @@ public class BillingController : ControllerBase
         return Ok(summary);
     }
 
+    [HttpPost("subscribe/{subscriptionId}")]
+    public async Task<IActionResult> Subscribe(int subscriptionId)
+    {
+        var result = await _billingService.SubscribeAsync(subscriptionId);
+        return Ok(result);
+    }
+    
     [HttpPost("cancel/{subscriptionId}")]
     public async Task<IActionResult> CancelBilling(int subscriptionId)
     {
@@ -41,7 +48,5 @@ public class BillingController : ControllerBase
         var result = await _billingService.ResumeBillingAsync(subscriptionId);
         return Ok(result);
     }
-    
-    
     
 }
