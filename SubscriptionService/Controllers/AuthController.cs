@@ -30,7 +30,8 @@ public class AuthController : ControllerBase
         {
             new(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new(ClaimTypes.Name, user.Email),
-            new(ClaimTypes.Email, user.Email)
+            new(ClaimTypes.Email, user.Email),
+            new(ClaimTypes.Role, user.Role.ToString())
         };
 
         var identity = new ClaimsIdentity(claims, "AppCookie");
@@ -42,7 +43,8 @@ public class AuthController : ControllerBase
         {
             message = "Logged in",
             userId = user.Id,
-            email = user.Email
+            email = user.Email,
+            role = user.Role.ToString()
         });
     }
 
@@ -57,7 +59,8 @@ public class AuthController : ControllerBase
             {
                 new(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new(ClaimTypes.Name, user.Email),
-                new(ClaimTypes.Email, user.Email)
+                new(ClaimTypes.Email, user.Email),
+                new(ClaimTypes.Role, user.Role.ToString())
             };
 
             var identity = new ClaimsIdentity(claims, "AppCookie");

@@ -1,4 +1,4 @@
-﻿namespace SubscriptionService.Models;
+﻿namespace SubscriptionService.Models.Subscription;
 
 public enum SubscriptionStatus
 {

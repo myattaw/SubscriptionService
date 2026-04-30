@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using SubscriptionService.Data;
 using SubscriptionService.Models;
 using SubscriptionService.Models.Payment;
+using SubscriptionService.Models.Subscription;
 
 namespace SubscriptionService.Services;
 
@@ -38,7 +39,7 @@ public class BillingService
         if (string.IsNullOrEmpty(userIdClaim))
             return "User not authenticated";
 
-        int userId = int.Parse(userIdClaim);
+        var userId = int.Parse(userIdClaim);
 
         var user = await _context.Users
             .Include(x => x.UserSubscriptions)

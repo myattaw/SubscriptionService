@@ -1,4 +1,5 @@
 using SubscriptionService.Models.Payment;
+using SubscriptionService.Models.Subscription;
 
 namespace SubscriptionService.Data;
 

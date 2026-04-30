@@ -1,4 +1,6 @@
-﻿namespace SubscriptionService.Models.Payment;
+﻿using SubscriptionService.Models.Subscription;
+
+namespace SubscriptionService.Models.Payment;
 
 public class PaymentTransaction
 {

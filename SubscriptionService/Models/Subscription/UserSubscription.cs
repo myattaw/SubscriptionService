@@ -1,6 +1,6 @@
 using SubscriptionService.Models.Payment;
 
-namespace SubscriptionService.Models;
+namespace SubscriptionService.Models.Subscription;
 
 public class UserSubscription
 {

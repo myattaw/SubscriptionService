@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SubscriptionService.Models.Requests;
 
@@ -21,6 +22,7 @@ public class SubscriptionController : ControllerBase
         return Ok(plans);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPost("plans")]
     public async Task<IActionResult> CreatePlan([FromBody] CreateSubscriptionPlanRequest request)
     {

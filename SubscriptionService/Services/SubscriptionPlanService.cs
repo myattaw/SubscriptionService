@@ -2,6 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using SubscriptionService.Data;
 using SubscriptionService.Models;
 using SubscriptionService.Models.Requests;
+using SubscriptionService.Models.Responses;
+using SubscriptionService.Models.Subscription;
 
 namespace SubscriptionService.Services;
 
@@ -14,21 +16,20 @@ public class SubscriptionPlanService
         _context = context;
     }
 
-    public async Task<List<object>> GetAvailablePlans()
+    public async Task<List<SubscriptionPlanResponse>> GetAvailablePlans()
     {
         return await _context.SubscriptionPlans
             .AsNoTracking()
-            .Select(x => new
+            .Select(x => new SubscriptionPlanResponse
             {
-                x.Id,
-                x.Name,
-                x.Price
+                Id = x.Id,
+                Name = x.Name,
+                Price = x.Price
             })
-            .Cast<object>()
             .ToListAsync();
     }
 
-    public async Task<SubscriptionPlan> CreatePlan(CreateSubscriptionPlanRequest request)
+    public async Task<SubscriptionPlanResponse> CreatePlan(CreateSubscriptionPlanRequest request)
     {
         var plan = new SubscriptionPlan
         {
@@ -39,7 +40,12 @@ public class SubscriptionPlanService
         _context.SubscriptionPlans.Add(plan);
         await _context.SaveChangesAsync();
 
-        return plan;
+        return new SubscriptionPlanResponse
+        {
+            Id = plan.Id,
+            Name = plan.Name,
+            Price = plan.Price
+        };
     }
 
     public async Task<bool> DeletePlan(int id)
