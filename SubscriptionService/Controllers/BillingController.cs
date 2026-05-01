@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SubscriptionService.Services;
+using SubscriptionService.Services.Billing;
 
 namespace SubscriptionService.Controllers;
 

@@ -11,9 +11,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<User> Users { get; set; }
     public DbSet<SubscriptionPlan> SubscriptionPlans { get; set; }
     public DbSet<UserSubscription> UserSubscriptions { get; set; }
-
     public DbSet<PaymentTransaction> PaymentTransactions { get; set; }
-
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

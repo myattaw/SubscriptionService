@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using SubscriptionService.Data;
-using SubscriptionService.Models;
 using SubscriptionService.Models.Requests;
 using SubscriptionService.Models.Responses;
 using SubscriptionService.Models.Subscription;

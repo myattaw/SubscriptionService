@@ -1,11 +1,10 @@
 ﻿using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
 using SubscriptionService.Data;
-using SubscriptionService.Models;
 using SubscriptionService.Models.Payment;
 using SubscriptionService.Models.Subscription;
 
-namespace SubscriptionService.Services;
+namespace SubscriptionService.Services.Billing;
 
 public class BillingService
 {
@@ -21,12 +20,44 @@ public class BillingService
 
     public async Task<object?> GetPaymentHistoryAsync(int userId)
     {
-        throw new NotImplementedException();
+        return await _context.PaymentTransactions
+            .Include(x => x.UserSubscription)
+            .ThenInclude(x => x.SubscriptionPlan)
+            .Where(x => x.UserSubscription.UserId == userId)
+            .OrderByDescending(x => x.ProcessedAt)
+            .Select(x => new
+            {
+                x.Id,
+                PlanName = x.UserSubscription.SubscriptionPlan.Name,
+                x.Amount,
+                x.Status,
+                x.TransactionType,
+                x.FailureReason,
+                x.ProcessedAt
+            })
+            .ToListAsync();
     }
 
     public async Task<object?> GetBillingSummaryAsync(int userId)
     {
-        throw new NotImplementedException();
+        var subscription = await _context.UserSubscriptions
+            .Include(x => x.SubscriptionPlan)
+            .FirstOrDefaultAsync(x => x.UserId == userId && x.BillingActive);
+
+        if (subscription == null)
+            return null;
+
+        var user = await _context.Users.FindAsync(userId);
+
+        return new
+        {
+            PlanName = subscription.SubscriptionPlan.Name,
+            subscription.CurrentPrice,
+            subscription.NextBillingDate,
+            subscription.Status,
+            BillingActive = subscription.BillingActive,
+            AccountCredits = user?.AccountCredits ?? 0
+        };
     }
     
     public async Task<string> SubscribeAsync(int subscriptionId)
@@ -101,12 +132,35 @@ public class BillingService
     
     public async Task<object?> CancelBillingAsync(int subscriptionId)
     {
-        throw new NotImplementedException();
+        var sub = await _context.UserSubscriptions.FindAsync(subscriptionId);
+
+        if (sub == null)
+            return "Subscription not found";
+
+        sub.BillingActive = false;
+        sub.Status = SubscriptionStatus.Cancelled;
+
+        await _context.SaveChangesAsync();
+
+        return "Billing cancelled";
     }
 
     public async Task<object?> ResumeBillingAsync(int subscriptionId)
     {
-        throw new NotImplementedException();
+        var sub = await _context.UserSubscriptions.FindAsync(subscriptionId);
+
+        if (sub == null)
+            return "Subscription not found";
+
+        sub.BillingActive = true;
+        sub.Status = SubscriptionStatus.Active;
+
+        if (sub.NextBillingDate == null || sub.NextBillingDate < DateTime.UtcNow)
+            sub.NextBillingDate = DateTime.UtcNow.AddMonths(1);
+
+        await _context.SaveChangesAsync();
+
+        return "Billing resumed";
     }
     
 }

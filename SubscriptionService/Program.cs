@@ -4,15 +4,16 @@ using SubscriptionService.Models;
 using SubscriptionService.Models.Enums;
 using SubscriptionService.Models.Subscription;
 using SubscriptionService.Services;
+using SubscriptionService.Services.Billing;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
 builder.Services.AddHttpContextAccessor();
 
+// Add services to the container.
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<SubscriptionPlanService>();
 builder.Services.AddScoped<BillingService>();
