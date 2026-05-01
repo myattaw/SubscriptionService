@@ -50,4 +50,17 @@ public class SubscriptionPlanServiceTests
         Assert.Contains(result, x => x.Name == "Premium");
     }
     
+    [Fact]
+    public async Task DeletePlan_ShouldReturnFalseWhenNotFound()
+    {
+        var context = TestDbFactory.Create();
+        var service = new SubscriptionPlanService(context);
+
+        var result = await service.DeletePlan(999);
+
+        Assert.False(result);
+    }
+    
+    
+    
 }
